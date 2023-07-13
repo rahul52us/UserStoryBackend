@@ -1,11 +1,16 @@
 import { NextFunction, Response } from "express";
 import Videos from "../../schemas/Videos";
 import { generateError } from "../config/function";
+import {createVideosValidation} from './utils/videos.validation'
 
 const createVideo = async (req: any, res: Response, next: NextFunction) => {
   try {
-    if (false) {
+    const result = createVideosValidation.validate(req.body)
+    if (result.error) {
+      throw generateError(result.error.details, 422);
     }
+    req.body.createdBy = req.userId
+    req.body.company = req.bodyData.company
     const video = new Videos(req.body);
     const savedVideo = await video.save();
     if (!savedVideo) {
